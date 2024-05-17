@@ -3,6 +3,8 @@ package kz.busnet.busnetserver.busstation;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
+import java.util.List;
+
 
 @Getter
 @Setter
@@ -10,13 +12,15 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class BusStationDTO {
-
-
-    @NotBlank(message = "Name is required")
+    private Long id;
     private String name;
-
-    @NotBlank(message = "Address is required")
+    private String city;
     private String address;
+    private Double latitude;
+    private Double longitude;
+    private List<String> contactNumbers;
+//    private byte[] photo;
+    private String contactEmail;
 
-
+    // Конструкторы, геттеры и сеттеры
 }

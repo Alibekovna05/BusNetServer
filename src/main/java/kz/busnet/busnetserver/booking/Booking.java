@@ -38,7 +38,9 @@ public class Booking {
 
 
     private String qrCodeData;
-    @Lob
-    private byte[] qrCodeDataImg;
+
+    private String passengerName;
+    private String passengerLastName;
+    private  String passengerEmail;
 
 }

@@ -44,22 +44,22 @@ public class BusController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/{id}/photo")
-    public ResponseEntity<Bus> uploadBusPhoto(@PathVariable Long id, @RequestParam("photo") MultipartFile photo) {
-        Bus bus = busService.findById(id);
-        try {
-            bus.setPhoto(photo.getBytes());
-            busService.save(bus);
-            return ResponseEntity.ok(bus);
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
-    @GetMapping("/{id}/photo")
-    public ResponseEntity<byte[]> getBusPhoto(@PathVariable Long id) {
-        Bus bus = busService.findById(id);
-        byte[] photo = bus.getPhoto();
-        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(photo);
-    }
+//    @PostMapping("/{id}/photo")
+//    public ResponseEntity<Bus> uploadBusPhoto(@PathVariable Long id, @RequestParam("photo") MultipartFile photo) {
+//        Bus bus = busService.findById(id);
+//        try {
+//            bus.setPhoto(photo.getBytes());
+//            busService.save(bus);
+//            return ResponseEntity.ok(bus);
+//        } catch (IOException e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+//        }
+//    }
+//
+//    @GetMapping("/{id}/photo")
+//    public ResponseEntity<byte[]> getBusPhoto(@PathVariable Long id) {
+//        Bus bus = busService.findById(id);
+//        byte[] photo = bus.getPhoto();
+//        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(photo);
+//    }
 }

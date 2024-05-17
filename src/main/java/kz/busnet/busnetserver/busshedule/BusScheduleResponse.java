@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BusScheduleResponse {
-    private Long id;
+    private Integer id;
     private LocalDateTime departTime;
     private LocalDateTime arrivalTime;
     private String departStation;

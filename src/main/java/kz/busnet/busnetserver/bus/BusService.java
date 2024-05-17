@@ -31,7 +31,7 @@ public class BusService {
         bus.setModel(busDetails.getModel());
         bus.setCapacity(busDetails.getCapacity());
         bus.setColor(busDetails.getColor());
-        bus.setPhoto(busDetails.getPhoto());
+//        bus.setPhoto(busDetails.getPhoto());
         return busRepository.save(bus);
     }
 

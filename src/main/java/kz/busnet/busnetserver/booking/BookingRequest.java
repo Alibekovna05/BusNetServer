@@ -10,4 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class BookingRequest {
     private Long busScheduleId;
+    private String passengerName;
+    private String passengerEmail;
+    private String passengerLastName;
 }

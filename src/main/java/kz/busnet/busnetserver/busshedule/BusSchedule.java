@@ -1,14 +1,18 @@
 package kz.busnet.busnetserver.busshedule;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.*;
+import kz.busnet.busnetserver.booking.Booking;
 import kz.busnet.busnetserver.bus.Bus;
 import kz.busnet.busnetserver.busproviders.BusCompany;
 import kz.busnet.busnetserver.busstation.BusStation;
+import kz.busnet.busnetserver.common.BaseEntity;
 import lombok.*;
 
 import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -17,12 +21,8 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class BusSchedule {
+public class BusSchedule  extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
     private LocalDateTime departTime;
 
@@ -46,21 +46,13 @@ public class BusSchedule {
 
     private Integer totalSeats;
     private Integer availableSeats;
-
     private Double price;
-
     @Enumerated(EnumType.STRING)
     private ScheduleStatus status;
-
-
-    @ElementCollection(targetClass = DayOfWeek.class)
-    @CollectionTable(name = "operational_days", joinColumns = @JoinColumn(name = "schedule_id"))
-    @Column(name = "day_of_week")
-    @Enumerated(EnumType.STRING)
-    private Set<DayOfWeek> operationalDays;
-
+    @OneToMany(mappedBy = "busSchedule")
+    private List<Booking> bookingList;
     public boolean isScheduledForToday() {
-        return operationalDays.contains(LocalDateTime.now().getDayOfWeek());
+        return departTime.isEqual(LocalDateTime.now());
     }
 
     public boolean isInTransit() {

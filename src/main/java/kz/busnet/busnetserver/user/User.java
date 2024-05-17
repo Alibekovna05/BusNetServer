@@ -1,6 +1,7 @@
 package kz.busnet.busnetserver.user;
 
 import jakarta.persistence.*;
+import kz.busnet.busnetserver.booking.Booking;
 import kz.busnet.busnetserver.role.Role;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -58,6 +59,9 @@ public class User implements UserDetails, Principal {
                 .map(r->new SimpleGrantedAuthority(r.getName()))
                 .collect(Collectors.toList());
     }
+
+//    @OneToMany(mappedBy = "bookings")
+//    private List<Booking> myBookingList;
 
     @Override
     public String getPassword() {

@@ -1,6 +1,8 @@
 package kz.busnet.busnetserver.busproviders;
 
 import jakarta.persistence.*;
+import kz.busnet.busnetserver.booking.Booking;
+import kz.busnet.busnetserver.busshedule.BusSchedule;
 import kz.busnet.busnetserver.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -47,4 +49,8 @@ public class BusCompany {
             joinColumns = @JoinColumn(name = "bus_provider_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id"))
     private List<User> managers;
+
+    @OneToMany(mappedBy = "busCompany")
+    private List<BusSchedule> busScheduleList;
+
 }
