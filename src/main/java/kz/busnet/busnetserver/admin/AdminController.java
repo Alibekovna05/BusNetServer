@@ -1,7 +1,9 @@
 package kz.busnet.busnetserver.admin;
 
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import kz.busnet.busnetserver.auth.AuthenticationService;
+import kz.busnet.busnetserver.busproviders.BusCompany;
 import kz.busnet.busnetserver.busproviders.BusCompanyRequest;
 import kz.busnet.busnetserver.role.Role;
 import kz.busnet.busnetserver.role.RoleRepository;
@@ -28,13 +30,7 @@ public class AdminController {
     private final RoleRepository roleRepository;
     private final AdminService adminService;
 
-    @PostMapping("/addBusManagers")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public void addBusProviderManager() {
-
-    }
-
-
+    // User CRUD Operations
 
     @GetMapping("/users")
     public List<User> getAllUsers() {
@@ -47,21 +43,57 @@ public class AdminController {
     }
 
     @PostMapping("/user")
-    public User addUser(@RequestBody User user) {
-        return userRepository.save(user);
+    public ResponseEntity<User> addUser(@Valid @RequestBody User user) {
+        User savedUser = userRepository.save(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
     }
 
     @PutMapping("/user/{id}")
-    public User updateUser(@PathVariable Integer id, @RequestBody User userUpdates) {
+    public ResponseEntity<User> updateUser(@PathVariable Integer id, @Valid @RequestBody User userUpdates) {
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
         // Update user fields here
-        return userRepository.save(user);
+        // For brevity, assuming userUpdates contains updated fields
+        user.setFirstname(userUpdates.getFirstname());
+        user.setLastname(userUpdates.getLastname());
+        // Similarly, update other fields as needed
+        User updatedUser = userRepository.save(user);
+        return ResponseEntity.ok(updatedUser);
     }
 
     @DeleteMapping("/user/{id}")
-    public String deleteUser(@PathVariable Integer id) {
+    public ResponseEntity<String> deleteUser(@PathVariable Integer id) {
         userRepository.deleteById(id);
-        return "User deleted successfully";
+        return ResponseEntity.ok("User deleted successfully");
+    }
+
+    // BusCompany CRUD Operations
+
+    @GetMapping("/buscompanies")
+    public List<BusCompany> getAllBusCompanies() {
+        return adminService.getAllBusCompanies();
+    }
+
+    @GetMapping("/buscompany/{id}")
+    public BusCompany getBusCompany(@PathVariable Long id) {
+        return adminService.getBusCompanyById(id);
+    }
+
+    @PostMapping("/buscompany")
+    public ResponseEntity<BusCompany> addBusCompany(@Valid @RequestBody BusCompanyRequest request) throws MessagingException {
+        BusCompany savedBusCompany = adminService.registerBusCompany(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedBusCompany);
+    }
+
+    @PutMapping("/buscompany/{id}")
+    public ResponseEntity<BusCompany> updateBusCompany(@PathVariable Long id, @Valid @RequestBody BusCompanyRequest request) {
+        BusCompany updatedBusCompany = adminService.updateBusCompany(id, request);
+        return ResponseEntity.ok(updatedBusCompany);
+    }
+
+    @DeleteMapping("/buscompany/{id}")
+    public ResponseEntity<String> deleteBusCompany(@PathVariable Long id) {
+        adminService.deleteBusCompany(id);
+        return ResponseEntity.ok("Bus Company deleted successfully");
     }
 
     @GetMapping("/roles")
@@ -71,3 +103,4 @@ public class AdminController {
 
     // Add more admin functionalities here
 }
+

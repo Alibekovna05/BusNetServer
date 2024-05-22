@@ -39,5 +39,4 @@ public class AuthenticationController {
         service.activateAccount(token);
     }
 
-
 }
