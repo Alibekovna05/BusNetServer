@@ -10,6 +10,7 @@ import kz.busnet.busnetserver.busproviders.BusCompanyRequest;
 import kz.busnet.busnetserver.busproviders.BusCompanyRepository;
 import kz.busnet.busnetserver.email.EmailService;
 import kz.busnet.busnetserver.email.EmailTemplateName;
+import kz.busnet.busnetserver.role.Role;
 import kz.busnet.busnetserver.role.RoleRepository;
 import kz.busnet.busnetserver.security.JwtService;
 import kz.busnet.busnetserver.user.TokenRepository;
@@ -45,7 +46,7 @@ public class AdminService {
     }
 
     public BusCompany registerBusCompany(BusCompanyRequest request) throws MessagingException {
-        var userRole = roleRepository.findByName("BUS_COMPANY")
+        Role userRole = roleRepository.findByName("BUS_COMPANY")
                 .orElseThrow(() -> new IllegalStateException("ROLE BUS_COMPANY was not initiated"));
 
         User user = User.builder()
@@ -72,7 +73,7 @@ public class AdminService {
         busCompany.setAddress(request.getAddress());
         busCompany.setContactNumber(request.getContactNumber());
         busCompany.setEmail(request.getEmail());
-        // Update other fields as needed
+
         return busCompanyRepository.save(busCompany);
     }
 

@@ -15,7 +15,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import java.time.LocalDateTime;
+
 
 import java.util.List;
 
@@ -26,6 +29,7 @@ import java.util.List;
 public class AdminController {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
     private final AuthenticationService authenticationService;
     private final RoleRepository roleRepository;
     private final AdminService adminService;
@@ -44,6 +48,7 @@ public class AdminController {
 
     @PostMapping("/user")
     public ResponseEntity<User> addUser(@Valid @RequestBody User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         User savedUser = userRepository.save(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
     }
@@ -51,11 +56,12 @@ public class AdminController {
     @PutMapping("/user/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Integer id, @Valid @RequestBody User userUpdates) {
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
-        // Update user fields here
-        // For brevity, assuming userUpdates contains updated fields
         user.setFirstname(userUpdates.getFirstname());
         user.setLastname(userUpdates.getLastname());
-        // Similarly, update other fields as needed
+        user.setAccountLocked(userUpdates.isAccountLocked());
+        user.setEnabled(userUpdates.isEnabled());
+        user.setPassword(passwordEncoder.encode(userUpdates.getPassword()));
+        user.setLastModifiedDate(LocalDateTime.now());
         User updatedUser = userRepository.save(user);
         return ResponseEntity.ok(updatedUser);
     }
