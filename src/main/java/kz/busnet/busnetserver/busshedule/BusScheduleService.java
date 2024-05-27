@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.time.DayOfWeek;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Sort;
 
 @Service
 @RequiredArgsConstructor
@@ -21,10 +22,7 @@ public class BusScheduleService {
     private final BusStationRepository busStationRepository;
     private final BusCompanyRepository busCompanyRepository;
 
-
     public List<BusScheduleResponse> findAll() {
-
-
         return busScheduleRepository.findAll().stream()
                 .map(busScheduleMapper::toResponseDto)
                 .collect(Collectors.toList());
@@ -38,18 +36,15 @@ public class BusScheduleService {
 
     public BusScheduleDTO create(BusScheduleDTO busScheduleDTO) {
         BusSchedule busSchedule = busScheduleMapper.toEntity(busScheduleDTO);
-        busSchedule.setBus(busRepository.getReferenceById(busScheduleDTO.getBusId()));
-        busSchedule.setDepartStation(busStationRepository.getReferenceById(busScheduleDTO.getDepartStationId()));
-        busSchedule.setArrivalStation(busStationRepository.getReferenceById(busScheduleDTO.getArrivalStationId()));
-        busSchedule.setBusCompany(busCompanyRepository.getReferenceById(busScheduleDTO.getBusCompanyId()));
+        setBusScheduleReferences(busScheduleDTO, busSchedule);
         busSchedule = busScheduleRepository.save(busSchedule);
         return busScheduleMapper.toDto(busSchedule);
     }
 
-    public BusScheduleDTO update(Long id) {
+    public BusScheduleDTO update(Long id, BusScheduleDTO busScheduleDTO) {
         BusSchedule busSchedule = busScheduleRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("BusSchedule not found"));
-        // Update entity fields here
+        updateBusSchedule(busScheduleDTO, busSchedule);
         busSchedule = busScheduleRepository.save(busSchedule);
         return busScheduleMapper.toDto(busSchedule);
     }
@@ -100,6 +95,35 @@ public class BusScheduleService {
     public List<BusScheduleDTO> findByDayOfWeek(DayOfWeek dayOfWeek) {
         return busScheduleRepository.findAll().stream()
                 .filter(schedule -> schedule.getOperationalDays().contains(dayOfWeek))
+                .map(busScheduleMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    private void setBusScheduleReferences(BusScheduleDTO busScheduleDTO, BusSchedule busSchedule) {
+        busSchedule.setBus(busRepository.getReferenceById(busScheduleDTO.getBusId()));
+        busSchedule.setDepartStation(busStationRepository.getReferenceById(busScheduleDTO.getDepartStationId()));
+        busSchedule.setArrivalStation(busStationRepository.getReferenceById(busScheduleDTO.getArrivalStationId()));
+        busSchedule.setBusCompany(busCompanyRepository.getReferenceById(busScheduleDTO.getBusCompanyId()));
+    }
+
+    private void updateBusSchedule(BusScheduleDTO busScheduleDTO, BusSchedule busSchedule) {
+        busSchedule.setDepartTime(busScheduleDTO.getDepartTime());
+        busSchedule.setArrivalTime(busScheduleDTO.getArrivalTime());
+        setBusScheduleReferences(busScheduleDTO, busSchedule);
+        busSchedule.setTotalSeats(busScheduleDTO.getTotalSeats());
+        busSchedule.setAvailableSeats(busScheduleDTO.getAvailableSeats());
+        busSchedule.setPrice(busScheduleDTO.getPrice());
+        busSchedule.setStatus(busScheduleDTO.getStatus());
+        busSchedule.setOperationalDays(busScheduleDTO.getOperationalDays());
+    }
+    public List<BusScheduleDTO> search(String keyword) {
+        return busScheduleRepository.search(keyword).stream()
+                .map(busScheduleMapper::toDto)
+                .collect(Collectors.toList());
+    }
+    public List<BusScheduleDTO> findAllSorted(String sortBy, String direction) {
+        Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
+        return busScheduleRepository.findAll(sort).stream()
                 .map(busScheduleMapper::toDto)
                 .collect(Collectors.toList());
     }

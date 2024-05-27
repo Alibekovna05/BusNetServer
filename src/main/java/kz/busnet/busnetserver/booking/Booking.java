@@ -41,5 +41,4 @@ public class Booking {
     @Lob
     private byte[] qrCodeDataImg;
 
-
 }

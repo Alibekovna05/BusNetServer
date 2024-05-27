@@ -29,7 +29,9 @@ public class BusScheduleMapper {
                 busSchedule.getBusCompany().getId(),
                 busSchedule.getTotalSeats(),
                 busSchedule.getAvailableSeats(),
-                busSchedule.getPrice());
+                busSchedule.getPrice(),
+                busSchedule.getStatus(),
+                busSchedule.getOperationalDays());
     }
 
     public BusScheduleResponse toResponseDto(BusSchedule busSchedule) {

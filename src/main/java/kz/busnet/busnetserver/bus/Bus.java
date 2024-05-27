@@ -24,5 +24,4 @@ public class Bus {
 
     @Lob
     private byte[] photo;
-
 }

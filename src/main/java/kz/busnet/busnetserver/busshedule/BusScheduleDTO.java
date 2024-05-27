@@ -22,6 +22,7 @@ public class BusScheduleDTO {
     private Integer totalSeats;
     private Integer availableSeats;
     private Double price;
-
+    private ScheduleStatus status;
+    private Set<DayOfWeek> operationalDays;
 
 }

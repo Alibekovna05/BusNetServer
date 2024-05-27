@@ -15,18 +15,14 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class Payment {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @OneToOne
     @JoinColumn(name = "booking_id", nullable = false)
     private Booking booking;
-
     private BigDecimal amount;
     private LocalDateTime paymentDate;
-
     @Enumerated(EnumType.STRING)
     private PaymentStatus status;
 }
