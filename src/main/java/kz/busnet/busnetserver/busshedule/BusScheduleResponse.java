@@ -16,7 +16,7 @@ public class BusScheduleResponse {
     private String departStation;
     private String arrivalStation;
     private String busNumber;
-    private Long busCompanyId;
+    private String busCompanyName;
     private Integer totalSeats;
     private Integer availableSeats;
     private Double price;

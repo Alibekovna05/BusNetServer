@@ -107,6 +107,6 @@ public class AdminController {
         return roleRepository.findAll();
     }
 
-    // Add more admin functionalities here
+
 }
 

@@ -34,19 +34,18 @@ public class BusScheduleService {
         return busScheduleMapper.toDto(busSchedule);
     }
 
-    public BusScheduleDTO create(BusScheduleDTO busScheduleDTO) {
+    public BusScheduleResponse create(BusScheduleDTO busScheduleDTO) {
         BusSchedule busSchedule = busScheduleMapper.toEntity(busScheduleDTO);
-        setBusScheduleReferences(busScheduleDTO, busSchedule);
         busSchedule = busScheduleRepository.save(busSchedule);
-        return busScheduleMapper.toDto(busSchedule);
+        return busScheduleMapper.toResponseDto(busSchedule);
     }
 
-    public BusScheduleDTO update(Long id, BusScheduleDTO busScheduleDTO) {
+    public BusScheduleResponse update(Long id, BusScheduleDTO busScheduleDTO) {
         BusSchedule busSchedule = busScheduleRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("BusSchedule not found"));
         updateBusSchedule(busScheduleDTO, busSchedule);
         busSchedule = busScheduleRepository.save(busSchedule);
-        return busScheduleMapper.toDto(busSchedule);
+        return busScheduleMapper.toResponseDto(busSchedule);
     }
 
     public void delete(Long id) {
@@ -55,55 +54,48 @@ public class BusScheduleService {
         busScheduleRepository.delete(busSchedule);
     }
 
-    public BusScheduleDTO bookSeat(Long id) {
+    public BusScheduleResponse bookSeat(Long id) {
         BusSchedule busSchedule = busScheduleRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("BusSchedule not found"));
         busSchedule.bookSeat();
         busSchedule = busScheduleRepository.save(busSchedule);
-        return busScheduleMapper.toDto(busSchedule);
+        return busScheduleMapper.toResponseDto(busSchedule);
     }
 
-    public BusScheduleDTO releaseSeat(Long id) {
+    public BusScheduleResponse releaseSeat(Long id) {
         BusSchedule busSchedule = busScheduleRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("BusSchedule not found"));
         busSchedule.releaseSeat();
         busSchedule = busScheduleRepository.save(busSchedule);
-        return busScheduleMapper.toDto(busSchedule);
+        return busScheduleMapper.toResponseDto(busSchedule);
     }
 
-    public List<BusScheduleDTO> findUpcoming() {
+    public List<BusScheduleResponse> findUpcoming() {
         return busScheduleRepository.findAll().stream()
                 .filter(BusSchedule::isUpcoming)
-                .map(busScheduleMapper::toDto)
+                .map(busScheduleMapper::toResponseDto)
                 .collect(Collectors.toList());
     }
 
-    public List<BusScheduleDTO> findCompleted() {
+    public List<BusScheduleResponse> findCompleted() {
         return busScheduleRepository.findAll().stream()
                 .filter(BusSchedule::isCompleted)
-                .map(busScheduleMapper::toDto)
+                .map(busScheduleMapper::toResponseDto)
                 .collect(Collectors.toList());
     }
 
-    public List<BusScheduleDTO> findInTransit() {
+    public List<BusScheduleResponse> findInTransit() {
         return busScheduleRepository.findAll().stream()
                 .filter(BusSchedule::isInTransit)
-                .map(busScheduleMapper::toDto)
+                .map(busScheduleMapper::toResponseDto)
                 .collect(Collectors.toList());
     }
 
-    public List<BusScheduleDTO> findByDayOfWeek(DayOfWeek dayOfWeek) {
+    public List<BusScheduleResponse> findByDayOfWeek(DayOfWeek dayOfWeek) {
         return busScheduleRepository.findAll().stream()
                 .filter(schedule -> schedule.getOperationalDays().contains(dayOfWeek))
-                .map(busScheduleMapper::toDto)
+                .map(busScheduleMapper::toResponseDto)
                 .collect(Collectors.toList());
-    }
-
-    private void setBusScheduleReferences(BusScheduleDTO busScheduleDTO, BusSchedule busSchedule) {
-        busSchedule.setBus(busRepository.getReferenceById(busScheduleDTO.getBusId()));
-        busSchedule.setDepartStation(busStationRepository.getReferenceById(busScheduleDTO.getDepartStationId()));
-        busSchedule.setArrivalStation(busStationRepository.getReferenceById(busScheduleDTO.getArrivalStationId()));
-        busSchedule.setBusCompany(busCompanyRepository.getReferenceById(busScheduleDTO.getBusCompanyId()));
     }
 
     private void updateBusSchedule(BusScheduleDTO busScheduleDTO, BusSchedule busSchedule) {
@@ -113,18 +105,27 @@ public class BusScheduleService {
         busSchedule.setTotalSeats(busScheduleDTO.getTotalSeats());
         busSchedule.setAvailableSeats(busScheduleDTO.getAvailableSeats());
         busSchedule.setPrice(busScheduleDTO.getPrice());
-        busSchedule.setStatus(busScheduleDTO.getStatus());
         busSchedule.setOperationalDays(busScheduleDTO.getOperationalDays());
+        busScheduleMapper.setStatus(busSchedule);
     }
-    public List<BusScheduleDTO> search(String keyword) {
+
+    private void setBusScheduleReferences(BusScheduleDTO busScheduleDTO, BusSchedule busSchedule) {
+        busSchedule.setBus(busRepository.getReferenceById(busScheduleDTO.getBusId()));
+        busSchedule.setDepartStation(busStationRepository.getReferenceById(busScheduleDTO.getDepartStationId()));
+        busSchedule.setArrivalStation(busStationRepository.getReferenceById(busScheduleDTO.getArrivalStationId()));
+        busSchedule.setBusCompany(busCompanyRepository.getReferenceById(busScheduleDTO.getBusCompanyId()));
+    }
+
+    public List<BusScheduleResponse> search(String keyword) {
         return busScheduleRepository.search(keyword).stream()
-                .map(busScheduleMapper::toDto)
+                .map(busScheduleMapper::toResponseDto)
                 .collect(Collectors.toList());
     }
-    public List<BusScheduleDTO> findAllSorted(String sortBy, String direction) {
+
+    public List<BusScheduleResponse> findAllSorted(String sortBy, String direction) {
         Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
         return busScheduleRepository.findAll(sort).stream()
-                .map(busScheduleMapper::toDto)
+                .map(busScheduleMapper::toResponseDto)
                 .collect(Collectors.toList());
     }
 }
