@@ -7,14 +7,12 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import jakarta.persistence.EntityNotFoundException;
 import kz.busnet.busnetserver.busshedule.BusScheduleRepository;
-import kz.busnet.busnetserver.common.PageResponse;
+
 import kz.busnet.busnetserver.payment.PaymentService;
 import kz.busnet.busnetserver.user.User;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.beans.factory.annotation.Qualifier;
+
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -41,6 +39,7 @@ public class BookingService {
     private final BusScheduleRepository busScheduleRepository;
     private final BookingMapper bookingMapper;
     private final PaymentService paymentService;
+    @Qualifier("taskScheduler")
     private final TaskScheduler taskScheduler;
     public List<BookingDTO> findAllMyBookings(Authentication connectedUser) {
         User user = ((User) connectedUser.getPrincipal());
@@ -156,7 +155,7 @@ public class BookingService {
             bookingRepository.save(booking);
         } catch (WriterException | IOException e) {
             log.error("Error generating QR code for booking: {}", booking.getId(), e);
-            // Handle the error appropriately
+
         }
     }
 

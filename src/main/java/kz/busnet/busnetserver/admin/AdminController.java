@@ -58,6 +58,7 @@ public class AdminController {
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
         user.setFirstname(userUpdates.getFirstname());
         user.setLastname(userUpdates.getLastname());
+        user.setEmail(userUpdates.getEmail());
         user.setAccountLocked(userUpdates.isAccountLocked());
         user.setEnabled(userUpdates.isEnabled());
         user.setPassword(passwordEncoder.encode(userUpdates.getPassword()));

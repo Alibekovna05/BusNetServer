@@ -1,14 +1,17 @@
 package kz.busnet.busnetserver.payment;
 
-
+import kz.busnet.busnetserver.payment.PaymentRepository;
+import kz.busnet.busnetserver.payment.PaymentStatus;
+import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityNotFoundException;
 import kz.busnet.busnetserver.booking.Booking;
 import kz.busnet.busnetserver.booking.BookingRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -16,7 +19,6 @@ public class PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final BookingRepository bookingRepository;
-
 
     public PaymentDTO processPayment(Long bookingId, BigDecimal amount) {
         Booking booking = bookingRepository.findById(bookingId)
@@ -37,7 +39,6 @@ public class PaymentService {
         Payment payment = paymentRepository.findById(paymentId)
                 .orElseThrow(() -> new EntityNotFoundException("Payment not found"));
 
-        // Logic to confirm payment goes here
         payment.setStatus(PaymentStatus.COMPLETED);
         payment = paymentRepository.save(payment);
 
@@ -48,7 +49,6 @@ public class PaymentService {
         Payment payment = paymentRepository.findById(paymentId)
                 .orElseThrow(() -> new EntityNotFoundException("Payment not found"));
 
-        // Logic to process the refund goes here
         payment.setStatus(PaymentStatus.REFUNDED);
         payment = paymentRepository.save(payment);
 
@@ -60,6 +60,30 @@ public class PaymentService {
                 .orElseThrow(() -> new EntityNotFoundException("Payment not found"));
 
         return mapToDTO(payment);
+    }
+
+    public List<PaymentDTO> getAllPayments() {
+        return paymentRepository.findAll().stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public PaymentDTO updatePayment(Long paymentId, PaymentDTO paymentDTO) {
+        Payment payment = paymentRepository.findById(paymentId)
+                .orElseThrow(() -> new EntityNotFoundException("Payment not found"));
+
+        payment.setAmount(paymentDTO.getAmount());
+        payment.setStatus(paymentDTO.getStatus());
+        payment = paymentRepository.save(payment);
+
+        return mapToDTO(payment);
+    }
+
+    public void deletePayment(Long paymentId) {
+        Payment payment = paymentRepository.findById(paymentId)
+                .orElseThrow(() -> new EntityNotFoundException("Payment not found"));
+
+        paymentRepository.delete(payment);
     }
 
     private PaymentDTO mapToDTO(Payment payment) {

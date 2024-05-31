@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/payments")
@@ -23,7 +24,6 @@ public class PaymentController {
         return ResponseEntity.ok(payment);
     }
 
-
     @PostMapping("/confirm")
     public ResponseEntity<PaymentDTO> confirmPayment(@RequestParam Long paymentId) {
         PaymentDTO paymentDTO = paymentService.confirmPayment(paymentId);
@@ -40,5 +40,23 @@ public class PaymentController {
     public ResponseEntity<PaymentDTO> getPaymentDetails(@PathVariable Long paymentId) {
         PaymentDTO paymentDTO = paymentService.getPaymentDetails(paymentId);
         return ResponseEntity.ok(paymentDTO);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<PaymentDTO>> getAllPayments() {
+        List<PaymentDTO> payments = paymentService.getAllPayments();
+        return ResponseEntity.ok(payments);
+    }
+
+    @PutMapping("/{paymentId}")
+    public ResponseEntity<PaymentDTO> updatePayment(@PathVariable Long paymentId, @RequestBody PaymentDTO paymentDTO) {
+        PaymentDTO updatedPayment = paymentService.updatePayment(paymentId, paymentDTO);
+        return ResponseEntity.ok(updatedPayment);
+    }
+
+    @DeleteMapping("/{paymentId}")
+    public ResponseEntity<Void> deletePayment(@PathVariable Long paymentId) {
+        paymentService.deletePayment(paymentId);
+        return ResponseEntity.noContent().build();
     }
 }
