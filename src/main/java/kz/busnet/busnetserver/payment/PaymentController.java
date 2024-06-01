@@ -41,7 +41,12 @@ public class PaymentController {
         PaymentDTO paymentDTO = paymentService.getPaymentDetails(paymentId);
         return ResponseEntity.ok(paymentDTO);
     }
-
+    @PostMapping("/create")
+    public ResponseEntity<PaymentDTO> processPayment(@RequestParam Long bookingId, @RequestParam BigDecimal amount,
+                                                     @RequestParam PaymentStatus status) {
+        PaymentDTO payment = paymentService.createPayment(bookingId, amount, status);
+        return ResponseEntity.ok(payment);
+    }
     @GetMapping
     public ResponseEntity<List<PaymentDTO>> getAllPayments() {
         List<PaymentDTO> payments = paymentService.getAllPayments();
