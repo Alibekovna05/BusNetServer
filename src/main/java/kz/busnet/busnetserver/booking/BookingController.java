@@ -15,7 +15,6 @@ import java.util.UUID;
 @RequestMapping("bookings")
 @RequiredArgsConstructor
 @Tag(name = "Booking")
-
 public class BookingController {
 
     private final BookingService bookingService;
@@ -40,14 +39,14 @@ public class BookingController {
     }
 
     @GetMapping("/cancel-booking")
-    public ResponseEntity<BookingDTO> cancelBooking(@RequestParam Long bookingId, Authentication connectedUser) {
+    public ResponseEntity<BookingDTO> cancelBooking(@RequestParam Long bookingId) {
         BookingDTO bookings = bookingService.returnTicket(bookingId);
         return ResponseEntity.ok(bookings);
     }
 
 
     @PostMapping
-    public ResponseEntity<BookingDTO> createBooking(@RequestBody BookingDTO bookingDTO) {
+    public ResponseEntity<BookingDTO> createBooking(@RequestBody BookingDTO bookingDTO) throws Exception {
         BookingDTO createdBooking = bookingService.createBooking(bookingDTO);
         return ResponseEntity.ok(createdBooking);
     }
@@ -83,11 +82,5 @@ public class BookingController {
         return ResponseEntity.ok(returnedBooking);
     }
 
-    @GetMapping("/{id}/qr-code")
-    public ResponseEntity<byte[]> getBookingQRCode(@PathVariable Long id) {
-        BookingDTO booking = bookingService.findBookingById(id);
-        byte[] qrCodeImage = booking.getQrCodeDataImg();
-        return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(qrCodeImage);
-    }
 
 }

@@ -1,11 +1,10 @@
 package kz.busnet.busnetserver.busproviders;
 
 import jakarta.persistence.*;
+import kz.busnet.busnetserver.booking.Booking;
+import kz.busnet.busnetserver.busshedule.BusSchedule;
 import kz.busnet.busnetserver.user.User;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -29,6 +28,7 @@ public class BusCompany {
     private String name;
     private String address;
     private String contactNumber;
+
     @ManyToOne
     @JoinColumn(name = "owner_id")
     private User owner;
@@ -47,4 +47,8 @@ public class BusCompany {
             joinColumns = @JoinColumn(name = "bus_provider_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id"))
     private List<User> managers;
+
+    @OneToMany(mappedBy = "busCompany")
+    private List<BusSchedule> busScheduleList;
+
 }

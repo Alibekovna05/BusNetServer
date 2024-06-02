@@ -18,11 +18,15 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class BookingDTO {
     private Long id;
-    private Long busScheduleId;
+    private Integer busScheduleId;
+    private String route;
+    private double price;
     private Integer userId;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime bookingDate;
     private BookingStatus status;
-    private byte[] qrCodeDataImg;
     private String qrCodeData;
+    private String passengerName;
+    private String passengerLastName;
+    private  String passengerEmail;
 }

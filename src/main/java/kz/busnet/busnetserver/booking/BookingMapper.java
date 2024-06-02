@@ -26,8 +26,12 @@ public class BookingMapper {
         dto.setId(booking.getId());
         dto.setBusScheduleId(booking.getBusSchedule().getId());
         dto.setUserId(booking.getUser().getId());
+        dto.setRoute(busScheduleRepository.getReferenceById(
+                booking.getBusSchedule().getId()).getDepartStation().getCity()+" - "+
+                busScheduleRepository.getReferenceById(
+                        booking.getBusSchedule().getId()).getArrivalStation().getCity());
+        dto.setPrice(busScheduleRepository.getReferenceById( booking.getBusSchedule().getId()).getPrice());
         dto.setBookingDate(booking.getBookingDate());
-        dto.setQrCodeDataImg(booking.getQrCodeDataImg());
         dto.setQrCodeData(booking.getQrCodeData());
         dto.setStatus(booking.getStatus());
         return dto;
@@ -40,15 +44,14 @@ public class BookingMapper {
         Booking booking = new Booking();
         BusSchedule busSchedule = busScheduleRepository.findById(dto.getBusScheduleId()).orElse(null);
         User user = userRepository.findById(dto.getUserId()).orElse(null);
-
         booking.setId(dto.getId());
         booking.setBusSchedule(busSchedule);
         booking.setUser(user);
+        booking.setPassengerName(dto.getPassengerName());
+        booking.setPassengerLastName(dto.getPassengerLastName());
+        booking.setPassengerEmail(dto.getPassengerEmail());
         booking.setBookingDate(dto.getBookingDate());
         booking.setStatus(dto.getStatus());
-
-
-        booking.setQrCodeDataImg(dto.getQrCodeDataImg());
         booking.setQrCodeData(dto.getQrCodeData());
         return booking;
     }
