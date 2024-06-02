@@ -134,4 +134,26 @@ public class AuthenticationService {
 
         return codeBuilder.toString();
     }
+
+    public String setPassword(String email, String newPassword) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User with email " + email + " not found"));
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+        return "New Password set successfully login with a new password";
+    }
+
+    @Transactional
+    public String forgotPassword(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User with email " + email + " not found"));
+        try {
+            emailService.sendForgotPassword(email);
+        } catch (MessagingException e) {
+            throw new RuntimeException("Unable to send set password link, try again");
+        }
+
+
+        return "Please check your email to set new password to your account";
+    }
 }

@@ -3,7 +3,9 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Bean;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -12,6 +14,7 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.springframework.mail.javamail.MimeMessageHelper.MULTIPART_MODE_MIXED;
@@ -22,6 +25,8 @@ import static org.springframework.mail.javamail.MimeMessageHelper.MULTIPART_MODE
 public class EmailService {
     private final JavaMailSender mailSender;
     private final SpringTemplateEngine templateEngine;
+
+
 
     @Async
     public void sendEmail(
@@ -104,4 +109,19 @@ public class EmailService {
 
     }
 
+
+    public void sendForgotPassword(String email) throws MessagingException {
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage);
+        mimeMessageHelper.setTo(email);
+        mimeMessageHelper.setSubject("Set Password");
+        mimeMessageHelper.setText("""
+                <div>
+                <a href = "http://localhost:8088/api/v1/auth/set-password?email=%s" target="_blank">click link to set password</a>
+                <div>
+                """.formatted(email), true);
+
+
+        mailSender.send(mimeMessage);
+    }
 }
