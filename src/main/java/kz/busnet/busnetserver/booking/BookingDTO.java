@@ -20,6 +20,7 @@ public class BookingDTO {
     private Long id;
     private Long busScheduleId;
     private Integer userId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime bookingDate;
     private BookingStatus status;
     private byte[] qrCodeDataImg;

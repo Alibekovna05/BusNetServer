@@ -72,7 +72,6 @@ public class BookingService {
 
         generateAndSaveQRCode(booking);
 
-        // Schedule a task to check payment status after 30 minutes
         schedulePaymentCheck(booking.getId());
         booking = bookingRepository.save(booking);
         return bookingMapper.toDto(booking);

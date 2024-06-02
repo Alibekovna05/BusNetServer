@@ -29,11 +29,21 @@ public class PaymentService {
         payment.setPaymentDate(LocalDateTime.now());
         payment.setStatus(PaymentStatus.PENDING);
         payment = paymentRepository.save(payment);
-        payment.setStatus(PaymentStatus.COMPLETED);
-        payment = paymentRepository.save(payment);
 
         return mapToDTO(payment);
     }
+    public PaymentDTO createPayment(Long bookingId, BigDecimal amount, PaymentStatus status) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new EntityNotFoundException("Booking not found"));
+        Payment payment = new Payment();
+        payment.setBooking(booking);
+        payment.setAmount(amount);
+        payment.setPaymentDate(LocalDateTime.now());
+        payment.setStatus(status);
+        payment = paymentRepository.save(payment);
+        return mapToDTO(payment);
+    }
+
 
     public PaymentDTO confirmPayment(Long paymentId) {
         Payment payment = paymentRepository.findById(paymentId)
